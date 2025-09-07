@@ -1,8 +1,8 @@
 package main
 
 import (
-	"gator/internal/config"
-	"errors"
+    "fmt"
+    "gator/internal/config"
 )
 
 type state struct {
@@ -19,10 +19,16 @@ type commands struct {
 }
 
 func (c *commands) register(name string, f func(*state, command) error) {
-    // TODO
+    if c.m == nil {
+        c.m = make(map[string]func(*state, command) error)
+    }
+    c.m[name] = f
 }
 
 func (c *commands) run(s *state, cmd command) error {
-    // TODO: look up handler, return error if not found
-    return errors.New("unregistered command")
+    h, ok := c.m[cmd.name]
+    if !ok {
+        return fmt.Errorf("unknown command: %s", cmd.name)
+    }
+    return h(s, cmd)
 }

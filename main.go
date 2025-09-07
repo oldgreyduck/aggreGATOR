@@ -1,27 +1,32 @@
 package main
 
 import (
-	"fmt"
-	"gator/internal/config"
+    "fmt"
+    "os"
+    "gator/internal/config"
 )
 
 func main() {
-	cfg, err := config.Read()
-	if err != nil {
-		fmt.Println("read error:", err)
-		return
-	}
+    cfg, err := config.Read()
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+    s := &state{cfg: &cfg}
 
-	if err := (&cfg).SetUser("yourname"); err != nil {
-		fmt.Println("set user error:", err)
-		return
-	}
+    cmds := &commands{m: map[string]func(*state, command) error{}}
+    cmds.register("login", handlerLogin)
 
-	cfg2, err := config.Read()
-	if err != nil {
-		fmt.Println("read2 error:", err)
-		return
-	}
+    if len(os.Args) < 2 {
+        fmt.Println("a command is required")
+        os.Exit(1)
+    }
+    name := os.Args[1]
+    args := os.Args[2:]
+    cmd := command{name: name, args: args}
 
-	fmt.Println(cfg2)
+    if err := cmds.run(s, cmd); err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
 }
