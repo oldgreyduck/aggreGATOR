@@ -8,10 +8,15 @@ import (
 
 func main() {
     cfg, err := config.Read()
-    if err != nil {
+if err != nil {
+    // if file missing, start with empty config
+    if os.IsNotExist(err) {
+        cfg = config.Config{}
+    } else {
         fmt.Println(err)
         os.Exit(1)
     }
+}
     s := &state{cfg: &cfg}
 
     cmds := &commands{m: map[string]func(*state, command) error{}}
