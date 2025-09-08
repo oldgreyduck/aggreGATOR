@@ -2,7 +2,7 @@
           "name": "Codespace with PostgreSQL",
           "features": {
             "ghcr.io/devcontainers/features/postgres:1": {
-              "version": "16.9", // Specify your desired PostgreSQL version
+              "version": "16", // Specify your desired PostgreSQL version
               "password": "postgres", // Set a password for the postgres user
               "database": "gator" // Define a default database
             }
